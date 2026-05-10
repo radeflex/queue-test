@@ -1,0 +1,31 @@
+services:
+  postgres:
+    container_name: postgres-qtest
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_DB: qtest
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - spring
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  qtest:
+    container_name: qtest
+    image: ghcr.io/radeflex/qtest:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - spring
+    depends_on:
+      - postgres
+networks:
+  spring:
+    driver: bridge
+volumes:
+  postgres:
+    driver: local
